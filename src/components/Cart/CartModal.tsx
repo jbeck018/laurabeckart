@@ -85,15 +85,15 @@ export function CartModal() {
                   if (isVariant) {
                     price = variant?.priceInUSD
 
-                    const imageVariant = product.gallery?.find((item) => {
-                      if (!item.variantOption) return false
+                    const imageVariant = product.gallery?.find((galleryItem: { variantOption?: unknown; image: unknown }) => {
+                      if (!galleryItem.variantOption) return false
                       const variantOptionID =
-                        typeof item.variantOption === 'object'
-                          ? item.variantOption.id
-                          : item.variantOption
+                        typeof galleryItem.variantOption === 'object' && galleryItem.variantOption !== null
+                          ? (galleryItem.variantOption as { id: number }).id
+                          : galleryItem.variantOption
 
-                      const hasMatch = variant?.options?.some((option) => {
-                        if (typeof option === 'object') return option.id === variantOptionID
+                      const hasMatch = variant?.options?.some((option: unknown) => {
+                        if (typeof option === 'object' && option !== null) return (option as { id: number }).id === variantOptionID
                         else return option === variantOptionID
                       })
 
@@ -132,8 +132,8 @@ export function CartModal() {
                             {isVariant && variant ? (
                               <p className="text-sm text-neutral-500 dark:text-neutral-400 capitalize">
                                 {variant.options
-                                  ?.map((option) => {
-                                    if (typeof option === 'object') return option.label
+                                  ?.map((option: unknown) => {
+                                    if (typeof option === 'object' && option !== null) return (option as { label: string }).label
                                     return null
                                   })
                                   .join(', ')}
