@@ -637,6 +637,8 @@ function buildSeedMediaData(
   return {
     ...data,
     filename: asset.filename,
+    focalX: 50,
+    focalY: 50,
     filesize: asset.filesize,
     height: asset.height,
     mimeType: asset.mimeType,
