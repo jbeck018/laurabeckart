@@ -1,0 +1,59 @@
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# dependencies
+/node_modules
+/.pnp
+.pnp.js
+
+# testing
+/coverage
+.playwright
+playwright-report/
+playwright-report/index.html
+
+# next.js
+/.next/
+/out/
+
+# production
+/build
+
+# misc
+.DS_Store
+*.pem
+
+# debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# local env files
+.env*
+!.env.example
+
+# vercel
+.vercel
+
+# cloudflare
+.worker-next
+.wrangler
+
+# payload local db
+payload.db
+*.db-journal
+
+# screenshots & playwright mcp
+*.png
+.playwright-mcp/
+
+# claude / omc local state
+.claude/
+.omc/
+
+# typescript
+*.tsbuildinfo
+next-env.d.ts
+
+public/media
+
