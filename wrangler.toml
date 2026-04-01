@@ -7,6 +7,12 @@ compatibility_flags = ["nodejs_compat"]
 
 assets = { directory = ".open-next/assets", binding = "ASSETS" }
 
+[build]
+command = "pnpm cf:build"
+
+[alias]
+"drizzle-kit-8c53b399dac79e94/api" = "./scripts/drizzle-kit-shim.js"
+
 [vars]
 COMPANY_NAME = "Laura Beck Art"
 SITE_NAME = "Laura Beck Art"
