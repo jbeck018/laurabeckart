@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic'
+
 import type { Order } from '@/payload-types'
 import type { Metadata } from 'next'
 

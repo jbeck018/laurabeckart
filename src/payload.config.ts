@@ -1,3 +1,5 @@
+import fs from 'fs'
+import path from 'path'
 import { sqliteD1Adapter } from '@payloadcms/db-d1-sqlite'
 import {
   BoldFeature,
@@ -10,9 +12,11 @@ import {
   UnorderedListFeature,
   lexicalEditor,
 } from '@payloadcms/richtext-lexical'
-import path from 'path'
 import { buildConfig } from 'payload'
 import { fileURLToPath } from 'url'
+import type { CloudflareContext } from '@opennextjs/cloudflare'
+import { getCloudflareContext } from '@opennextjs/cloudflare'
+import type { GetPlatformProxyOptions } from 'wrangler'
 
 import { Categories } from '@/collections/Categories'
 import { Media } from '@/collections/Media'
@@ -24,24 +28,34 @@ import { plugins } from './plugins'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
+const realpath = (value: string) => {
+  try {
+    return fs.existsSync(value) ? fs.realpathSync(value) : undefined
+  } catch {
+    return undefined
+  }
+}
+
+const isCLI = process.argv.some(
+  (value) => realpath(value)?.endsWith(path.join('payload', 'bin.js')) ?? false,
+)
+const isProduction = process.env.NODE_ENV === 'production'
+
+const cloudflare =
+  isCLI || !isProduction
+    ? await getCloudflareContextFromWrangler()
+    : await getCloudflareContext({ async: true })
 
 export default buildConfig({
   admin: {
     components: {
-      // The `BeforeLogin` component renders a message that you see while logging into your admin panel.
-      // Feel free to delete this at any time. Simply remove the line below and the import `BeforeLogin` statement on line 15.
       beforeLogin: ['@/components/BeforeLogin#BeforeLogin'],
-      // The `BeforeDashboard` component renders the 'welcome' block that you see after logging into your admin panel.
-      // Feel free to delete this at any time. Simply remove the line below and the import `BeforeDashboard` statement on line 15.
       beforeDashboard: ['@/components/BeforeDashboard#BeforeDashboard'],
     },
     user: Users.slug,
   },
   collections: [Users, Pages, Categories, Media],
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  db: sqliteD1Adapter({
-    binding: ((globalThis as any).cloudflare?.env?.laurabeckart_db ?? {}) as any,
-  }),
+  db: sqliteD1Adapter({ binding: cloudflare.env.D1 }),
   editor: lexicalEditor({
     features: () => {
       return [
@@ -77,7 +91,6 @@ export default buildConfig({
       ]
     },
   }),
-  //email: nodemailerAdapter(),
   endpoints: [],
   globals: [Header, Footer],
   plugins,
@@ -85,8 +98,15 @@ export default buildConfig({
   typescript: {
     outputFile: path.resolve(dirname, 'payload-types.ts'),
   },
-  // Sharp is now an optional dependency -
-  // if you want to resize images, crop, set focal point, etc.
-  // make sure to install it and pass it to the config.
-  // sharp,
 })
+
+// Adapted from official Payload CMS Cloudflare D1 template
+function getCloudflareContextFromWrangler(): Promise<CloudflareContext> {
+  return import(/* webpackIgnore: true */ `${'__wrangler'.replaceAll('_', '')}`).then(
+    ({ getPlatformProxy }) =>
+      getPlatformProxy({
+        environment: process.env.CLOUDFLARE_ENV,
+        remoteBindings: isProduction,
+      } satisfies GetPlatformProxyOptions),
+  )
+}

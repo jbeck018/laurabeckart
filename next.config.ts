@@ -10,7 +10,6 @@ import { redirects } from './redirects'
 const NEXT_PUBLIC_SERVER_URL = process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3000'
 
 const nextConfig: NextConfig = {
-  output: 'standalone',
   images: {
     localPatterns: [
       {
@@ -19,7 +18,7 @@ const nextConfig: NextConfig = {
     ],
     qualities: [90, 100],
     remotePatterns: [
-      ...[NEXT_PUBLIC_SERVER_URL /* 'https://example.com' */].map((item) => {
+      ...[NEXT_PUBLIC_SERVER_URL].map((item) => {
         const url = new URL(item)
 
         return {
@@ -29,6 +28,8 @@ const nextConfig: NextConfig = {
       }),
     ],
   },
+  // Packages with Cloudflare Workers (workerd) specific code
+  serverExternalPackages: ['pg-cloudflare'],
   reactStrictMode: true,
   redirects,
   webpack: (webpackConfig) => {
@@ -40,9 +41,6 @@ const nextConfig: NextConfig = {
 
     return webpackConfig
   },
-  turbopack: {
-    root: path.resolve(dirname),
-  },
 }
 
-export default withPayload(nextConfig)
+export default withPayload(nextConfig, { devBundleServerPackages: false })

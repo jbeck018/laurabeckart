@@ -8,6 +8,9 @@ importers:
 
   .:
     dependencies:
+      '@opennextjs/cloudflare':
+        specifier: ^1.18.0
+        version: 1.18.0(next@16.2.1(@babel/core@7.29.0)(@playwright/test@1.58.2)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(sass@1.77.4))(wrangler@4.79.0)
       '@payloadcms/admin-bar':
         specifier: 3.81.0
         version: 3.81.0(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
@@ -144,9 +147,6 @@ importers:
       '@next/eslint-plugin-next':
         specifier: ^15.5.4
         version: 15.5.14
-      '@opennextjs/cloudflare':
-        specifier: ^1.18.0
-        version: 1.18.0(next@16.2.1(@babel/core@7.29.0)(@playwright/test@1.58.2)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(sass@1.77.4))(wrangler@4.79.0)
       '@playwright/test':
         specifier: 1.58.2
         version: 1.58.2
