@@ -16,7 +16,7 @@
     "payload": "cross-env NODE_OPTIONS=--no-deprecation payload",
     "reinstall": "cross-env NODE_OPTIONS=--no-deprecation rm -rf node_modules && rm pnpm-lock.yaml && pnpm --ignore-workspace install",
     "start": "cross-env NODE_OPTIONS=--no-deprecation next start",
-    "cf:build": "pnpm build && opennextjs-cloudflare build",
+    "cf:build": "node scripts/patch-opennext.mjs && opennextjs-cloudflare build",
     "cf:preview": "wrangler pages dev",
     "cf:deploy": "wrangler pages deploy",
     "cf:db:create": "wrangler d1 create laurabeckart-db",
