@@ -40,7 +40,7 @@ export default buildConfig({
   collections: [Users, Pages, Categories, Media],
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   db: sqliteD1Adapter({
-    binding: ((globalThis as any).cloudflare?.env?.laurabeckart_db ?? {}) as D1Database,
+    binding: ((globalThis as any).cloudflare?.env?.laurabeckart_db ?? {}) as any,
   }),
   editor: lexicalEditor({
     features: () => {
