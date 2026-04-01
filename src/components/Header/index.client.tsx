@@ -32,7 +32,7 @@ export function HeaderClient({ header }: Props) {
             className="text-lg tracking-wide font-light lowercase"
             href="/"
           >
-            Laura Beck <span className="uppercase">AR</span>t
+            laura beck art
           </Link>
 
           <div className="hidden md:flex items-center gap-6">

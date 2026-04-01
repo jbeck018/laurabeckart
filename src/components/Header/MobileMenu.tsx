@@ -54,7 +54,7 @@ export function MobileMenu({ menu }: Props) {
       <SheetContent side="left" className="px-6">
         <SheetHeader className="px-0 pt-4 pb-0">
           <SheetTitle className="text-lg font-light lowercase tracking-wide">
-            Laura Beck <span className="uppercase">AR</span>t
+            laura beck art
           </SheetTitle>
 
           <SheetDescription />
