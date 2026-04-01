@@ -83,36 +83,51 @@ export const seed = async ({
   const seedContext = {
     disableRevalidate: true,
   }
-  const create = async (args: Parameters<Payload['create']>[0]): Promise<any> =>
-    payload.create({
-      ...args,
-      context: {
-        ...seedContext,
-        ...(args.context || {}),
-      },
-      overrideAccess: false,
-      req,
-    })
-  const updateGlobal = async (args: Parameters<Payload['updateGlobal']>[0]): Promise<any> =>
-    payload.updateGlobal({
-      ...args,
-      context: {
-        ...seedContext,
-        ...(args.context || {}),
-      },
-      overrideAccess: false,
-      req,
-    })
-  const deleteDocs = async (args: Parameters<Payload['delete']>[0]): Promise<any> =>
-    payload.delete({
-      ...args,
-      context: {
-        ...seedContext,
-        ...(args.context || {}),
-      },
-      overrideAccess: false,
-      req,
-    })
+  const create = async (args: Parameters<Payload['create']>[0]): Promise<any> => {
+    try {
+      return await payload.create({
+        ...args,
+        context: {
+          ...seedContext,
+          ...(args.context || {}),
+        },
+        overrideAccess: false,
+        req,
+      })
+    } catch (error) {
+      throw new Error(`Failed to create ${String(args.collection)}: ${getErrorMessage(error)}`)
+    }
+  }
+  const updateGlobal = async (args: Parameters<Payload['updateGlobal']>[0]): Promise<any> => {
+    try {
+      return await payload.updateGlobal({
+        ...args,
+        context: {
+          ...seedContext,
+          ...(args.context || {}),
+        },
+        overrideAccess: false,
+        req,
+      })
+    } catch (error) {
+      throw new Error(`Failed to update global ${String(args.slug)}: ${getErrorMessage(error)}`)
+    }
+  }
+  const deleteDocs = async (args: Parameters<Payload['delete']>[0]): Promise<any> => {
+    try {
+      return await payload.delete({
+        ...args,
+        context: {
+          ...seedContext,
+          ...(args.context || {}),
+        },
+        overrideAccess: false,
+        req,
+      })
+    } catch (error) {
+      throw new Error(`Failed to delete ${String(args.collection)} docs: ${getErrorMessage(error)}`)
+    }
+  }
 
   // we need to clear the media directory before seeding
   // as well as the collections and globals
@@ -609,6 +624,10 @@ type SeedAsset = {
   mimeType: string
   url: string
   width: number
+}
+
+function getErrorMessage(error: unknown): string {
+  return error instanceof Error ? error.message : 'Unknown error'
 }
 
 function buildSeedMediaData(

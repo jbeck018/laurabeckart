@@ -39,33 +39,34 @@ export const SeedButton: React.FC = () => {
       setLoading(true)
 
       try {
-        toast.promise(
-          new Promise((resolve, reject) => {
-            try {
-              fetch('/next/seed', { method: 'POST', credentials: 'include' })
-                .then((res) => {
-                  if (res.ok) {
-                    resolve(true)
-                    setSeeded(true)
-                  } else {
-                    reject('An error occurred while seeding.')
-                  }
-                })
-                .catch((error) => {
-                  reject(error)
-                })
-            } catch (error) {
-              reject(error)
+        const seedPromise = fetch('/next/seed', { method: 'POST', credentials: 'include' }).then(
+          async (res) => {
+            if (res.ok) {
+              return true
             }
-          }),
-          {
-            loading: 'Seeding with data....',
-            success: <SuccessMessage />,
-            error: 'An error occurred while seeding.',
+
+            const body = await res
+              .json()
+              .catch((): { error?: string } | null => null)
+
+            throw new Error(body?.error || `Seeding failed with status ${res.status}.`)
           },
         )
+
+        toast.promise(seedPromise, {
+          loading: 'Seeding with data....',
+          success: <SuccessMessage />,
+          error: (err) =>
+            err instanceof Error ? err.message : 'An error occurred while seeding.',
+        })
+
+        await seedPromise
+        setSeeded(true)
+        setError(null)
       } catch (err) {
         setError(err)
+      } finally {
+        setLoading(false)
       }
     },
     [loading, seeded, error],
