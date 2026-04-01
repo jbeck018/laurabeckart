@@ -1,5 +1,8 @@
 import { sqliteAdapter } from '@payloadcms/db-sqlite'
 import { sqliteD1Adapter } from '@payloadcms/db-d1-sqlite'
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const cf = (globalThis as any).cloudflare
 import {
   BoldFeature,
   EXPERIMENTAL_TableFeature,
@@ -39,16 +42,15 @@ export default buildConfig({
     user: Users.slug,
   },
   collections: [Users, Pages, Categories, Media],
-  db:
-    typeof globalThis.cloudflare !== 'undefined'
-      ? sqliteD1Adapter({
-          binding: cloudflare.env.laurabeckart_db,
-        })
-      : sqliteAdapter({
-          client: {
-            url: 'file:./payload.db',
-          },
-        }),
+  db: cf
+    ? sqliteD1Adapter({
+        binding: cf.env.laurabeckart_db,
+      })
+    : sqliteAdapter({
+        client: {
+          url: 'file:./payload.db',
+        },
+      }),
   editor: lexicalEditor({
     features: () => {
       return [
