@@ -6,6 +6,12 @@ compatibility_flags = ["nodejs_compat"]
 
 pages_build_output_dir = ".worker-next"
 
+[vars]
+COMPANY_NAME = "Laura Beck Art"
+SITE_NAME = "Laura Beck Art"
+NEXT_PUBLIC_SERVER_URL = "https://laurabeckart.com"
+PAYLOAD_PUBLIC_SERVER_URL = "https://laurabeckart.com"
+
 [[d1_databases]]
 binding = "laurabeckart_db"
 database_name = "laurabeckart-db"

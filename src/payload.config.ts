@@ -90,7 +90,7 @@ export default buildConfig({
   endpoints: [],
   globals: [Header, Footer],
   plugins,
-  secret: process.env.PAYLOAD_SECRET || '',
+  secret: process.env.PAYLOAD_SECRET || 'build-time-placeholder-secret-not-for-production',
   typescript: {
     outputFile: path.resolve(dirname, 'payload-types.ts'),
   },
