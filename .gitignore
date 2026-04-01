@@ -41,6 +41,7 @@ yarn-error.log*
 
 # cloudflare
 .worker-next
+.open-next
 .wrangler
 
 # payload local db
