@@ -1,4 +1,4 @@
-import type { CollectionSlug, GlobalSlug, Payload, PayloadRequest, File } from 'payload'
+import type { CollectionSlug, GlobalSlug, Payload, PayloadRequest } from 'payload'
 
 import { contactFormData } from './contact-form'
 import { contactPageData } from './contact-page'
@@ -156,16 +156,16 @@ export const seed = async ({
 
   const [imageHatBuffer, imageTshirtBlackBuffer, imageTshirtWhiteBuffer, heroBuffer] =
     await Promise.all([
-      fetchFileByURL(
+      fetchSeedAsset(
         'https://raw.githubusercontent.com/payloadcms/payload/refs/heads/main/templates/ecommerce/src/endpoints/seed/hat-logo.png',
       ),
-      fetchFileByURL(
+      fetchSeedAsset(
         'https://raw.githubusercontent.com/payloadcms/payload/refs/heads/main/templates/ecommerce/src/endpoints/seed/tshirt-black.png',
       ),
-      fetchFileByURL(
+      fetchSeedAsset(
         'https://raw.githubusercontent.com/payloadcms/payload/refs/heads/main/templates/ecommerce/src/endpoints/seed/tshirt-white.png',
       ),
-      fetchFileByURL(
+      fetchSeedAsset(
         'https://raw.githubusercontent.com/payloadcms/payload/refs/heads/main/templates/website/src/endpoints/seed/image-hero1.webp',
       ),
     ])
@@ -191,23 +191,19 @@ export const seed = async ({
     }),
     create({
       collection: 'media',
-      data: imageHatData,
-      file: imageHatBuffer,
+      data: buildSeedMediaData(imageHatData, imageHatBuffer),
     }),
     create({
       collection: 'media',
-      data: imageTshirtBlackData,
-      file: imageTshirtBlackBuffer,
+      data: buildSeedMediaData(imageTshirtBlackData, imageTshirtBlackBuffer),
     }),
     create({
       collection: 'media',
-      data: imageTshirtWhiteData,
-      file: imageTshirtWhiteBuffer,
+      data: buildSeedMediaData(imageTshirtWhiteData, imageTshirtWhiteBuffer),
     }),
     create({
       collection: 'media',
-      data: imageHero1Data,
-      file: heroBuffer,
+      data: buildSeedMediaData(imageHero1Data, heroBuffer),
     }),
     ...categories.map((category) =>
       create({
@@ -606,7 +602,31 @@ export const seed = async ({
   payload.logger.info('Seeded database successfully!')
 }
 
-async function fetchFileByURL(url: string): Promise<File> {
+type SeedAsset = {
+  filename: string
+  filesize: number
+  height: number
+  mimeType: string
+  url: string
+  width: number
+}
+
+function buildSeedMediaData(
+  data: Record<string, unknown>,
+  asset: SeedAsset,
+): Record<string, unknown> {
+  return {
+    ...data,
+    filename: asset.filename,
+    filesize: asset.filesize,
+    height: asset.height,
+    mimeType: asset.mimeType,
+    url: asset.url,
+    width: asset.width,
+  }
+}
+
+async function fetchSeedAsset(url: string): Promise<SeedAsset> {
   const res = await fetch(url)
 
   if (!res.ok) {
@@ -614,11 +634,84 @@ async function fetchFileByURL(url: string): Promise<File> {
   }
 
   const data = await res.arrayBuffer()
+  const buffer = Buffer.from(data)
+  const filename = url.split('/').pop() || `file-${Date.now()}`
+  const mimeType = getMimeTypeFromURL(filename)
+  const { width, height } = getImageDimensions(buffer, mimeType)
 
   return {
-    name: url.split('/').pop() || `file-${Date.now()}`,
-    data: Buffer.from(data),
-    mimetype: `image/${url.split('.').pop()}`,
-    size: data.byteLength,
+    filename,
+    filesize: data.byteLength,
+    height,
+    mimeType,
+    url,
+    width,
   }
+}
+
+function getMimeTypeFromURL(filename: string): string {
+  const extension = filename.split('.').pop()?.toLowerCase()
+
+  switch (extension) {
+    case 'png':
+      return 'image/png'
+    case 'webp':
+      return 'image/webp'
+    default:
+      throw new Error(`Unsupported seed asset type for ${filename}`)
+  }
+}
+
+function getImageDimensions(
+  buffer: Buffer,
+  mimeType: string,
+): {
+  height: number
+  width: number
+} {
+  switch (mimeType) {
+    case 'image/png':
+      return {
+        width: buffer.readUInt32BE(16),
+        height: buffer.readUInt32BE(20),
+      }
+    case 'image/webp':
+      return getWebPDimensions(buffer)
+    default:
+      throw new Error(`Unsupported mime type for seed asset: ${mimeType}`)
+  }
+}
+
+function getWebPDimensions(
+  buffer: Buffer,
+): {
+  height: number
+  width: number
+} {
+  const chunkType = buffer.toString('ascii', 12, 16)
+
+  if (chunkType === 'VP8X') {
+    return {
+      width: 1 + buffer.readUIntLE(24, 3),
+      height: 1 + buffer.readUIntLE(27, 3),
+    }
+  }
+
+  if (chunkType === 'VP8 ') {
+    return {
+      width: buffer.readUInt16LE(26) & 0x3fff,
+      height: buffer.readUInt16LE(28) & 0x3fff,
+    }
+  }
+
+  if (chunkType === 'VP8L') {
+    const bits = buffer.readUInt32LE(21)
+
+    return {
+      width: (bits & 0x3fff) + 1,
+      height: ((bits >> 14) & 0x3fff) + 1,
+    }
+  }
+
+  throw new Error('Unsupported WebP chunk type for seed asset')
 }

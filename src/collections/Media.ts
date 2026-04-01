@@ -41,6 +41,7 @@ export const Media: CollectionConfig = {
     },
   ],
   upload: {
+    filesRequiredOnCreate: false,
     staticDir: path.resolve(dirname, '../../public/media'),
   },
 }
