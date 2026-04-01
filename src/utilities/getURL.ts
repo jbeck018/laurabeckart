@@ -1,20 +1,23 @@
 import { canUseDOM } from './canUseDOM'
 
-export const getServerSideURL = () => {
-  let url = process.env.NEXT_PUBLIC_SERVER_URL
+const isUsableURL = (value?: string | null): value is string =>
+  Boolean(value && value !== 'undefined' && value !== 'null')
 
-  if (!url && process.env.VERCEL_PROJECT_PRODUCTION_URL) {
+export const getServerSideURL = (): string => {
+  const url = process.env.NEXT_PUBLIC_SERVER_URL
+
+  if (!isUsableURL(url) && process.env.VERCEL_PROJECT_PRODUCTION_URL) {
     return `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
   }
 
-  if (!url) {
-    url = 'http://localhost:3000'
+  if (isUsableURL(url)) {
+    return url
   }
 
-  return url
+  return 'http://localhost:3000'
 }
 
-export const getClientSideURL = () => {
+export const getClientSideURL = (): string => {
   if (canUseDOM) {
     const protocol = window.location.protocol
     const domain = window.location.hostname
@@ -27,5 +30,5 @@ export const getClientSideURL = () => {
     return `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
   }
 
-  return process.env.NEXT_PUBLIC_SERVER_URL || ''
+  return isUsableURL(process.env.NEXT_PUBLIC_SERVER_URL) ? process.env.NEXT_PUBLIC_SERVER_URL : ''
 }
