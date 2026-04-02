@@ -19,7 +19,7 @@ export async function Footer() {
             {/* Social Icons */}
             <div className="flex items-center gap-6">
               <a
-                href="https://instagram.com"
+                href="https://www.instagram.com/laura.beck.art/"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="hover:text-foreground transition-colors"
@@ -28,7 +28,7 @@ export async function Footer() {
                 <Instagram className="h-5 w-5" />
               </a>
               <a
-                href="mailto:hello@laurabeckart.com"
+                href="mailto:laura.grace08@gmail.com"
                 className="hover:text-foreground transition-colors"
                 aria-label="Email"
               >

@@ -11,8 +11,29 @@ import { Providers } from '@/providers'
 import { InitTheme } from '@/providers/Theme/InitTheme'
 import { GeistSans } from 'geist/font/sans'
 import { GeistMono } from 'geist/font/mono'
+import { Caveat, Permanent_Marker, Sacramento } from 'next/font/google'
 import React from 'react'
 import './globals.css'
+
+const caveat = Caveat({
+  subsets: ['latin'],
+  variable: '--font-caveat',
+  display: 'swap',
+})
+
+const permanentMarker = Permanent_Marker({
+  subsets: ['latin'],
+  variable: '--font-permanent-marker',
+  weight: '400',
+  display: 'swap',
+})
+
+const sacramento = Sacramento({
+  subsets: ['latin'],
+  variable: '--font-sacramento',
+  weight: '400',
+  display: 'swap',
+})
 
 /* const { SITE_NAME, TWITTER_CREATOR, TWITTER_SITE } = process.env
 const baseUrl = process.env.NEXT_PUBLIC_VERCEL_URL
@@ -44,7 +65,15 @@ const twitterSite = TWITTER_SITE ? ensureStartsWith(TWITTER_SITE, 'https://') : 
 export default async function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html
-      className={[GeistSans.variable, GeistMono.variable].filter(Boolean).join(' ')}
+      className={[
+        GeistSans.variable,
+        GeistMono.variable,
+        caveat.variable,
+        permanentMarker.variable,
+        sacramento.variable,
+      ]
+        .filter(Boolean)
+        .join(' ')}
       lang="en"
       suppressHydrationWarning
     >

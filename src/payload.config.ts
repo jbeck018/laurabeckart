@@ -3,12 +3,20 @@ import path from 'path'
 import { sqliteD1Adapter } from '@payloadcms/db-d1-sqlite'
 import { r2Storage } from '@payloadcms/storage-r2'
 import {
+  AlignFeature,
+  BlockquoteFeature,
   BoldFeature,
+  ChecklistFeature,
   EXPERIMENTAL_TableFeature,
+  HorizontalRuleFeature,
   IndentFeature,
+  InlineCodeFeature,
   ItalicFeature,
   LinkFeature,
   OrderedListFeature,
+  StrikethroughFeature,
+  SubscriptFeature,
+  SuperscriptFeature,
   UnderlineFeature,
   UnorderedListFeature,
   lexicalEditor,
@@ -25,6 +33,7 @@ import { Pages } from '@/collections/Pages'
 import { Users } from '@/collections/Users'
 import { Footer } from '@/globals/Footer'
 import { Header } from '@/globals/Header'
+import { richTextTextStateFeature } from '@/utilities/richTextStyles'
 import { plugins } from './plugins'
 
 const filename = fileURLToPath(import.meta.url)
@@ -64,8 +73,13 @@ export default buildConfig({
         UnderlineFeature(),
         BoldFeature(),
         ItalicFeature(),
+        StrikethroughFeature(),
+        InlineCodeFeature(),
+        SubscriptFeature(),
+        SuperscriptFeature(),
         OrderedListFeature(),
         UnorderedListFeature(),
+        ChecklistFeature(),
         LinkFeature({
           enabledCollections: ['pages'],
           fields: ({ defaultFields }) => {
@@ -88,8 +102,12 @@ export default buildConfig({
             ]
           },
         }),
+        AlignFeature(),
         IndentFeature(),
         EXPERIMENTAL_TableFeature(),
+        BlockquoteFeature(),
+        HorizontalRuleFeature(),
+        richTextTextStateFeature,
       ]
     },
   }),

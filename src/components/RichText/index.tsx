@@ -16,6 +16,7 @@ import type {
 import { BannerBlock } from '@/blocks/Banner/Component'
 import { CallToActionBlock } from '@/blocks/CallToAction/Component'
 import { cn } from '@/utilities/cn'
+import { getRichTextTextStyles } from '@/utilities/richTextStyles'
 
 type NodeTypes =
   | DefaultNodeTypes
@@ -23,6 +24,19 @@ type NodeTypes =
 
 const jsxConverters: JSXConvertersFunction<NodeTypes> = ({ defaultConverters }) => ({
   ...defaultConverters,
+  text: (args) => {
+    const { node } = args
+    const styles = getRichTextTextStyles(node)
+    const defaultTextConverter = defaultConverters.text
+    const text =
+      typeof defaultTextConverter === 'function' ? defaultTextConverter(args) : node.text
+
+    if (!Object.keys(styles).length) {
+      return text
+    }
+
+    return <span style={styles}>{text}</span>
+  },
   blocks: {
     banner: ({ node }) => <BannerBlock className="col-start-2 mb-4" {...node.fields} />,
     mediaBlock: ({ node }) => (
