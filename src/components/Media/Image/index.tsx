@@ -58,9 +58,7 @@ export const Image: React.FC<MediaProps> = (props) => {
 
   if (!src) return null
 
-  const remoteSrc = typeof src === 'string' && /^https?:\/\//.test(src) ? src : null
-
-  if (remoteSrc) {
+  if (typeof src === 'string') {
     return (
       <img
         alt={alt || ''}
@@ -72,7 +70,7 @@ export const Image: React.FC<MediaProps> = (props) => {
             onLoadFromProps()
           }
         }}
-        src={remoteSrc}
+        src={src}
         width={!fill ? width || widthFromProps || undefined : undefined}
       />
     )
