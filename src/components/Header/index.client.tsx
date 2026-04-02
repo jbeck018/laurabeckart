@@ -2,6 +2,9 @@
 import { CMSLink } from '@/components/Link'
 import { Cart } from '@/components/Cart'
 import { OpenCartButton } from '@/components/Cart/OpenCart'
+import logo from '@/assets/laura-logo.jpg'
+import { ThemeSelector } from '@/providers/Theme/ThemeSelector'
+import Image from 'next/image'
 import Link from 'next/link'
 import React, { Suspense } from 'react'
 
@@ -21,21 +24,24 @@ export function HeaderClient({ header }: Props) {
 
   return (
     <div className="sticky top-0 z-50 backdrop-blur-md bg-background/80">
-      <nav className="flex items-center justify-between container py-4">
+      <nav className="flex items-center justify-between container py-3">
         <div className="block flex-none md:hidden">
           <Suspense fallback={null}>
             <MobileMenu menu={menu} />
           </Suspense>
         </div>
         <div className="flex w-full items-center justify-between">
-          <Link
-            className="text-lg tracking-wide font-light lowercase"
-            href="/"
-          >
-            laura beck art
+          <Link className="shrink-0" href="/">
+            <Image
+              alt="Laura Beck Art"
+              className="h-12 w-12 rounded-full object-cover ring-1 ring-border/70 md:h-14 md:w-14"
+              priority
+              sizes="56px"
+              src={logo}
+            />
           </Link>
 
-          <div className="hidden md:flex items-center gap-6">
+          <div className="hidden md:flex items-center gap-4">
             {menu.length ? (
               <ul className="flex gap-6 text-sm items-center">
                 {menu.map((item) => (
@@ -55,6 +61,8 @@ export function HeaderClient({ header }: Props) {
                 ))}
               </ul>
             ) : null}
+
+            <ThemeSelector />
 
             <Suspense fallback={<OpenCartButton />}>
               <Cart />

@@ -2,8 +2,10 @@
 
 import type { Header } from '@/payload-types'
 
+import logo from '@/assets/laura-logo.jpg'
 import { CMSLink } from '@/components/Link'
 import { Button } from '@/components/ui/button'
+import { ThemeSelector } from '@/providers/Theme/ThemeSelector'
 import {
   Sheet,
   SheetContent,
@@ -14,6 +16,7 @@ import {
 } from '@/components/ui/sheet'
 import { useAuth } from '@/providers/Auth'
 import { MenuIcon } from 'lucide-react'
+import Image from 'next/image'
 import Link from 'next/link'
 import { usePathname, useSearchParams } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
@@ -54,7 +57,15 @@ export function MobileMenu({ menu }: Props) {
       <SheetContent side="left" className="px-6">
         <SheetHeader className="px-0 pt-4 pb-0">
           <SheetTitle className="text-lg font-light lowercase tracking-wide">
-            laura beck art
+            <Link className="inline-flex items-center" href="/" onClick={closeMobileMenu}>
+              <Image
+                alt="Laura Beck Art"
+                className="h-16 w-16 rounded-full object-cover ring-1 ring-border/70"
+                priority
+                sizes="64px"
+                src={logo}
+              />
+            </Link>
           </SheetTitle>
 
           <SheetDescription />
@@ -70,6 +81,10 @@ export function MobileMenu({ menu }: Props) {
               ))}
             </ul>
           ) : null}
+        </div>
+
+        <div className="pb-6">
+          <ThemeSelector />
         </div>
 
         {user ? (

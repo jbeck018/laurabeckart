@@ -1,7 +1,6 @@
 import type { Footer } from '@/payload-types'
 
 import { FooterMenu } from '@/components/Footer/menu'
-import { ThemeSelector } from '@/providers/Theme/ThemeSelector'
 import { getCachedGlobal } from '@/utilities/getGlobals'
 import React, { Suspense } from 'react'
 import { Instagram, Mail } from 'lucide-react'
@@ -45,9 +44,6 @@ export async function Footer() {
             <div className="flex flex-col items-center gap-1 text-xs tracking-wide">
               <p>&copy; {currentYear} Laura Beck Art</p>
             </div>
-
-            {/* Theme selector - subtle */}
-            <ThemeSelector />
           </div>
         </div>
       </div>
