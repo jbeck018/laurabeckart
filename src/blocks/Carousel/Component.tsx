@@ -13,11 +13,10 @@ export const CarouselBlock: React.FC<
 > = async (props) => {
   const { id, categories, limit = 3, populateBy, selectedDocs } = props
 
+  const payload = await getPayload({ config: configPromise })
   let products: Product[] = []
 
   if (populateBy === 'collection') {
-    const payload = await getPayload({ config: configPromise })
-
     const flattenedCategories = categories?.length
       ? categories.map((category) => {
           if (typeof category === 'object') return category.id
@@ -27,7 +26,7 @@ export const CarouselBlock: React.FC<
 
     const fetchedProducts = await payload.find({
       collection: 'products',
-      depth: 1,
+      depth: 2,
       limit: limit || undefined,
       ...(flattenedCategories && flattenedCategories.length > 0
         ? {
@@ -42,9 +41,31 @@ export const CarouselBlock: React.FC<
 
     products = fetchedProducts.docs
   } else if (selectedDocs?.length) {
-    products = selectedDocs.map((post) => {
-      if (typeof post.value !== 'string') return post.value
-    }) as Product[]
+    const selectedProductIDs = selectedDocs
+      .map((post) => {
+        if (typeof post.value === 'object' && post.value !== null) return post.value.id
+        return post.value
+      })
+      .filter((value): value is DefaultDocumentIDType => Boolean(value))
+
+    if (selectedProductIDs.length) {
+      const fetchedProducts = await payload.find({
+        collection: 'products',
+        depth: 2,
+        limit: selectedProductIDs.length,
+        pagination: false,
+        where: {
+          id: {
+            in: selectedProductIDs,
+          },
+        },
+      })
+
+      const productMap = new Map(fetchedProducts.docs.map((product) => [product.id, product]))
+      products = selectedProductIDs
+        .map((productID) => productMap.get(productID))
+        .filter((product): product is Product => Boolean(product))
+    }
   }
 
   if (!products?.length) return null
