@@ -3,6 +3,7 @@
 import type { StaticImageData } from 'next/image'
 
 import { cn } from '@/utilities/cn'
+import { getMediaURL } from '@/utilities/getMediaURL'
 import NextImage from 'next/image'
 import React from 'react'
 
@@ -27,8 +28,6 @@ export const Image: React.FC<MediaProps> = (props) => {
     width: widthFromProps,
   } = props
 
-  const [isLoading, setIsLoading] = React.useState(true)
-
   let width: number | undefined | null
   let height: number | undefined | null
   let alt = altFromProps
@@ -47,7 +46,7 @@ export const Image: React.FC<MediaProps> = (props) => {
     height = heightFromProps ?? fullHeight
     alt = altFromResource
 
-    src = url || `/media/${fullFilename}`
+    src = getMediaURL({ filename: fullFilename, url })
   }
 
   // NOTE: this is used by the browser to determine which image to download at different screen sizes
@@ -57,6 +56,28 @@ export const Image: React.FC<MediaProps> = (props) => {
         .map(([, value]) => `(max-width: ${value}px) ${value}px`)
         .join(', ')
 
+  if (!src) return null
+
+  const remoteSrc = typeof src === 'string' && /^https?:\/\//.test(src) ? src : null
+
+  if (remoteSrc) {
+    return (
+      <img
+        alt={alt || ''}
+        className={cn(imgClassName, fill && 'absolute inset-0 h-full w-full')}
+        height={!fill ? height || heightFromProps || undefined : undefined}
+        onClick={onClick}
+        onLoad={() => {
+          if (typeof onLoadFromProps === 'function') {
+            onLoadFromProps()
+          }
+        }}
+        src={remoteSrc}
+        width={!fill ? width || widthFromProps || undefined : undefined}
+      />
+    )
+  }
+
   return (
     <NextImage
       alt={alt || ''}
@@ -65,7 +86,6 @@ export const Image: React.FC<MediaProps> = (props) => {
       height={!fill ? height || heightFromProps : undefined}
       onClick={onClick}
       onLoad={() => {
-        setIsLoading(false)
         if (typeof onLoadFromProps === 'function') {
           onLoadFromProps()
         }

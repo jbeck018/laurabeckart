@@ -1,6 +1,7 @@
 'use client'
 
 import { cn } from '@/utilities/cn'
+import { getMediaURL } from '@/utilities/getMediaURL'
 import React, { useEffect, useRef } from 'react'
 
 import type { Props as MediaProps } from '../types'
@@ -22,7 +23,9 @@ export const Video: React.FC<MediaProps> = (props) => {
   }, [])
 
   if (resource && typeof resource === 'object') {
-    const { filename } = resource
+    const src = getMediaURL(resource)
+
+    if (!src) return null
 
     return (
       <video
@@ -35,7 +38,7 @@ export const Video: React.FC<MediaProps> = (props) => {
         playsInline
         ref={videoRef}
       >
-        <source src={`/media/${filename}`} />
+        <source src={src} />
       </video>
     )
   }
