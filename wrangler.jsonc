@@ -25,6 +25,12 @@
       "remote": true
     }
   ],
+  "r2_buckets": [
+    {
+      "binding": "R2",
+      "bucket_name": "laurabeckart"
+    }
+  ],
   "alias": {
     "drizzle-kit-8c53b399dac79e94/api": "./scripts/drizzle-kit-shim.js"
   },
