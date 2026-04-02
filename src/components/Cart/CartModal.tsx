@@ -1,5 +1,6 @@
 'use client'
 
+import { Media } from '@/components/Media'
 import { Price } from '@/components/Price'
 import {
   Sheet,
@@ -11,7 +12,6 @@ import {
 } from '@/components/ui/sheet'
 import { useCart } from '@payloadcms/plugin-ecommerce/client/react'
 import { ShoppingCart } from 'lucide-react'
-import Image from 'next/image'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import React, { useEffect, useMemo, useState } from 'react'
@@ -116,13 +116,11 @@ export function CartModal() {
                           href={`/products/${(item.product as Product)?.slug}`}
                         >
                           <div className="relative h-16 w-16 cursor-pointer overflow-hidden rounded-md border border-neutral-300 bg-neutral-300 dark:border-neutral-700 dark:bg-neutral-900 dark:hover:bg-neutral-800">
-                            {image?.url && (
-                              <Image
-                                alt={image?.alt || product?.title || ''}
-                                className="h-full w-full object-cover"
-                                height={94}
-                                src={image.url}
-                                width={94}
+                            {image && (
+                              <Media
+                                fill
+                                imgClassName="h-full w-full object-cover"
+                                resource={image}
                               />
                             )}
                           </div>

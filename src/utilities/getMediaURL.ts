@@ -1,3 +1,5 @@
+import { getServerSideURL } from './getURL'
+
 type MediaLike = {
   filename?: string | null
   url?: string | null
@@ -21,4 +23,16 @@ export const getMediaURL = (media?: MediaLike | null): string => {
   }
 
   return ''
+}
+
+export const getAbsoluteMediaURL = (media?: MediaLike | null): string => {
+  const mediaURL = getMediaURL(media)
+
+  if (!mediaURL) return ''
+
+  if (mediaURL.startsWith('http://') || mediaURL.startsWith('https://')) {
+    return mediaURL
+  }
+
+  return `${getServerSideURL()}${mediaURL}`
 }

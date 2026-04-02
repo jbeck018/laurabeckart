@@ -6,6 +6,7 @@ import { RenderBlocks } from '@/blocks/RenderBlocks'
 import { GridTileImage } from '@/components/Grid/tile'
 import { Gallery } from '@/components/product/Gallery'
 import { ProductDescription } from '@/components/product/ProductDescription'
+import { getAbsoluteMediaURL } from '@/utilities/getMediaURL'
 import configPromise from '@payload-config'
 import { getPayload } from 'payload'
 import { draftMode } from 'next/headers'
@@ -33,16 +34,17 @@ export async function generateMetadata({ params }: Args): Promise<Metadata> {
   const canIndex = product._status === 'published'
 
   const seoImage = metaImage || (gallery.length ? (gallery[0]?.image as Media) : undefined)
+  const seoImageURL = getAbsoluteMediaURL(seoImage)
 
   return {
     description: product.meta?.description || '',
-    openGraph: seoImage?.url
+    openGraph: seoImageURL && seoImage
       ? {
           images: [
             {
               alt: seoImage?.alt,
               height: seoImage.height!,
-              url: seoImage?.url,
+              url: seoImageURL,
               width: seoImage.width!,
             },
           ],
@@ -98,7 +100,7 @@ export default async function ProductPage({ params }: Args) {
     '@context': 'https://schema.org',
     '@type': 'Product',
     description: product.description,
-    image: metaImage?.url,
+    image: getAbsoluteMediaURL(metaImage),
     offers: {
       '@type': 'AggregateOffer',
       availability: hasStock ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
