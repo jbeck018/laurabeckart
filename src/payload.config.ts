@@ -1,6 +1,7 @@
 import fs from 'fs'
 import path from 'path'
 import { sqliteD1Adapter } from '@payloadcms/db-d1-sqlite'
+import { r2Storage } from '@payloadcms/storage-r2'
 import {
   BoldFeature,
   EXPERIMENTAL_TableFeature,
@@ -45,6 +46,7 @@ const cloudflare =
   isCLI || !isProduction
     ? await getCloudflareContextFromWrangler()
     : await getCloudflareContext({ async: true })
+const r2Bucket = (cloudflare.env as { R2?: Parameters<typeof r2Storage>[0]['bucket'] }).R2
 
 export default buildConfig({
   admin: {
@@ -93,7 +95,20 @@ export default buildConfig({
   }),
   endpoints: [],
   globals: [Header, Footer],
-  plugins,
+  plugins: [
+    ...plugins,
+    ...(r2Bucket
+      ? [
+          r2Storage({
+            alwaysInsertFields: true,
+            bucket: r2Bucket,
+            collections: {
+              media: true,
+            },
+          }),
+        ]
+      : []),
+  ],
   secret: process.env.PAYLOAD_SECRET || 'build-time-placeholder-secret-not-for-production',
   typescript: {
     outputFile: path.resolve(dirname, 'payload-types.ts'),
