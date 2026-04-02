@@ -121,7 +121,10 @@ export default buildConfig({
             alwaysInsertFields: true,
             bucket: r2Bucket,
             collections: {
-              media: true,
+              media: {
+                generateFileURL: ({ filename }) =>
+                  `/api/r2-media/${encodeURIComponent(filename)}`,
+              },
             },
           }),
         ]
