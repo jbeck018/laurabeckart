@@ -10,8 +10,14 @@ export const getMediaURL = (media?: MediaLike | null): string => {
 
   const { filename, url } = media
 
+  const encodedFilename = filename ? encodeURIComponent(filename) : ''
+
   if (url) {
     if (url.startsWith('http://') || url.startsWith('https://') || url.startsWith('/')) {
+      if (url.startsWith('/api/media/file/') && encodedFilename) {
+        return `/api/r2-media/${encodedFilename}`
+      }
+
       return url
     }
 
@@ -19,7 +25,7 @@ export const getMediaURL = (media?: MediaLike | null): string => {
   }
 
   if (filename) {
-    return `/api/media/file/${filename}`
+    return `/api/r2-media/${encodedFilename}`
   }
 
   return ''
