@@ -3,7 +3,6 @@ import { CMSLink } from '@/components/Link'
 import { Cart } from '@/components/Cart'
 import { OpenCartButton } from '@/components/Cart/OpenCart'
 import logo from '@/assets/laura-logo.jpg'
-import { ThemeSelector } from '@/providers/Theme/ThemeSelector'
 import Image from 'next/image'
 import Link from 'next/link'
 import React, { Suspense } from 'react'
@@ -61,8 +60,6 @@ export function HeaderClient({ header }: Props) {
                 ))}
               </ul>
             ) : null}
-
-            <ThemeSelector />
 
             <Suspense fallback={<OpenCartButton />}>
               <Cart />

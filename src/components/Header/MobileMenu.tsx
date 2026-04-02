@@ -5,7 +5,6 @@ import type { Header } from '@/payload-types'
 import logo from '@/assets/laura-logo.jpg'
 import { CMSLink } from '@/components/Link'
 import { Button } from '@/components/ui/button'
-import { ThemeSelector } from '@/providers/Theme/ThemeSelector'
 import {
   Sheet,
   SheetContent,
@@ -81,10 +80,6 @@ export function MobileMenu({ menu }: Props) {
               ))}
             </ul>
           ) : null}
-        </div>
-
-        <div className="pb-6">
-          <ThemeSelector />
         </div>
 
         {user ? (
