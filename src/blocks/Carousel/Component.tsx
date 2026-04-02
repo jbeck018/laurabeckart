@@ -1,10 +1,24 @@
-import type { Product, CarouselBlock as CarouselBlockProps } from '@/payload-types'
+import type { Media, Product, CarouselBlock as CarouselBlockProps } from '@/payload-types'
 
 import configPromise from '@payload-config'
 import { DefaultDocumentIDType, getPayload } from 'payload'
 import React from 'react'
 
 import { CarouselClient } from './Component.client'
+
+const getCarouselImage = (product: Product): Media | null => {
+  if (typeof product.meta?.image === 'object' && product.meta.image !== null) {
+    return product.meta.image as Media
+  }
+
+  const firstGalleryImage = product.gallery?.[0]?.image
+
+  if (typeof firstGalleryImage === 'object' && firstGalleryImage !== null) {
+    return firstGalleryImage as Media
+  }
+
+  return null
+}
 
 export const CarouselBlock: React.FC<
   CarouselBlockProps & {
@@ -70,9 +84,16 @@ export const CarouselBlock: React.FC<
 
   if (!products?.length) return null
 
+  const carouselProducts = products.map((product) => ({
+    image: getCarouselImage(product),
+    priceInUSD: product.priceInUSD ?? null,
+    slug: product.slug ?? '',
+    title: product.title,
+  }))
+
   return (
     <div className=" w-full pb-6 pt-1">
-      <CarouselClient products={products} />
+      <CarouselClient products={carouselProducts} />
     </div>
   )
 }
