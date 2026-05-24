@@ -4,6 +4,7 @@ import { CallToActionBlock } from '@/blocks/CallToAction/Component'
 import { CarouselBlock } from '@/blocks/Carousel/Component'
 import { ContentBlock } from '@/blocks/Content/Component'
 import { FormBlock } from '@/blocks/Form/Component'
+import { InstagramFeedBlock } from '@/blocks/InstagramFeed/Component'
 import { MediaBlock } from '@/blocks/MediaBlock/Component'
 import { ThreeItemGridBlock } from '@/blocks/ThreeItemGrid/Component'
 import { toKebabCase } from '@/utilities/toKebabCase'
@@ -18,6 +19,7 @@ const blockComponents = {
   content: ContentBlock,
   cta: CallToActionBlock,
   formBlock: FormBlock,
+  instagramFeed: InstagramFeedBlock,
   mediaBlock: MediaBlock,
   threeItemGrid: ThreeItemGridBlock,
 }

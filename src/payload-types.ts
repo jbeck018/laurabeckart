@@ -495,6 +495,7 @@ export interface Page {
     | ThreeItemGridBlock
     | BannerBlock
     | FormBlock
+    | InstagramFeedBlock
   )[];
   meta?: {
     title?: string | null;
@@ -902,6 +903,39 @@ export interface Form {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "InstagramFeedBlock".
+ */
+export interface InstagramFeedBlock {
+  heading?: string | null;
+  /**
+   * Handle without the @. Used for the "Follow" link.
+   */
+  username?: string | null;
+  /**
+   * How many posts to show (max 24).
+   */
+  limit?: number | null;
+  columns?: ('2' | '3' | '4' | '6') | null;
+  /**
+   * Shown when the Instagram access token is not configured (or the API is unavailable). Curate posts manually here.
+   */
+  fallbackPosts?:
+    | {
+        image: number | Media;
+        /**
+         * Optional link to the Instagram post.
+         */
+        link?: string | null;
+        caption?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'instagramFeed';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "variants".
  */
 export interface Variant {
@@ -1284,6 +1318,7 @@ export interface PagesSelect<T extends boolean = true> {
         threeItemGrid?: T | ThreeItemGridBlockSelect<T>;
         banner?: T | BannerBlockSelect<T>;
         formBlock?: T | FormBlockSelect<T>;
+        instagramFeed?: T | InstagramFeedBlockSelect<T>;
       };
   meta?:
     | T
@@ -1420,6 +1455,26 @@ export interface FormBlockSelect<T extends boolean = true> {
   form?: T;
   enableIntro?: T;
   introContent?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "InstagramFeedBlock_select".
+ */
+export interface InstagramFeedBlockSelect<T extends boolean = true> {
+  heading?: T;
+  username?: T;
+  limit?: T;
+  columns?: T;
+  fallbackPosts?:
+    | T
+    | {
+        image?: T;
+        link?: T;
+        caption?: T;
+        id?: T;
+      };
   id?: T;
   blockName?: T;
 }

@@ -64,7 +64,10 @@ export default buildConfig({
   admin: {
     components: {
       beforeLogin: ['@/components/BeforeLogin#BeforeLogin'],
-      beforeDashboard: ['@/components/BeforeDashboard#BeforeDashboard'],
+      beforeDashboard: [
+        '@/components/BeforeDashboard#BeforeDashboard',
+        '@/components/InstagramSetup#InstagramSetup',
+      ],
     },
     meta: {
       icons: [{ rel: 'icon', type: 'image/jpeg', url: '/favicon.jpg' }],

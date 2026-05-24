@@ -9,6 +9,7 @@ import { Archive } from '@/blocks/ArchiveBlock/config'
 import { CallToAction } from '@/blocks/CallToAction/config'
 import { Content } from '@/blocks/Content/config'
 import { FormBlock } from '@/blocks/Form/config'
+import { InstagramFeed } from '@/blocks/InstagramFeed/config'
 import { MediaBlock } from '@/blocks/MediaBlock/config'
 import { hero } from '@/fields/hero'
 import { slugField } from 'payload'
@@ -96,6 +97,7 @@ export const Pages: CollectionConfig = {
                 ThreeItemGrid,
                 Banner,
                 FormBlock,
+                InstagramFeed,
               ],
               required: true,
             },
