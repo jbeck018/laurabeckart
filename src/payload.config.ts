@@ -19,6 +19,7 @@ import {
   SuperscriptFeature,
   UnderlineFeature,
   UnorderedListFeature,
+  UploadFeature,
   lexicalEditor,
 } from '@payloadcms/richtext-lexical'
 import { buildConfig } from 'payload'
@@ -107,6 +108,7 @@ export default buildConfig({
         EXPERIMENTAL_TableFeature(),
         BlockquoteFeature(),
         HorizontalRuleFeature(),
+        UploadFeature({ enabledCollections: ['media'] }),
         richTextTextStateFeature,
       ]
     },

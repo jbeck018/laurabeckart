@@ -11,6 +11,7 @@ import { CodeBlock, CodeBlockProps } from '@/blocks/Code/Component'
 import type {
   BannerBlock as BannerBlockProps,
   CallToActionBlock as CTABlockProps,
+  Media as MediaType,
   MediaBlock as MediaBlockProps,
 } from '@/payload-types'
 import { BannerBlock } from '@/blocks/Banner/Component'
@@ -36,6 +37,25 @@ const jsxConverters: JSXConvertersFunction<NodeTypes> = ({ defaultConverters }) 
     }
 
     return <span style={styles}>{text}</span>
+  },
+  upload: ({ node }) => {
+    if (node.relationTo !== 'media') return null
+
+    const value = node.value
+
+    if (!value || typeof value !== 'object') return null
+
+    return (
+      <MediaBlock
+        blockType="mediaBlock"
+        captionClassName="mx-auto max-w-3xl"
+        className="col-start-1 col-span-3"
+        disableInnerContainer={true}
+        enableGutter={false}
+        imgClassName="m-0"
+        media={value as MediaType}
+      />
+    )
   },
   blocks: {
     banner: ({ node }) => <BannerBlock className="col-start-2 mb-4" {...node.fields} />,

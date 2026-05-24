@@ -511,6 +511,10 @@ export interface ContentBlock {
   columns?:
     | {
         size?: ('oneThird' | 'half' | 'twoThirds' | 'full') | null;
+        /**
+         * Optional image for this column. Shown above the text (if any).
+         */
+        media?: (number | null) | Media;
         richText?: {
           root: {
             type: string;
@@ -612,6 +616,7 @@ export interface Category {
  * via the `definition` "CarouselBlock".
  */
 export interface CarouselBlock {
+  contentType?: ('products' | 'media') | null;
   populateBy?: ('collection' | 'selection') | null;
   relationTo?: 'products' | null;
   categories?: (number | Category)[] | null;
@@ -622,6 +627,10 @@ export interface CarouselBlock {
         value: number | Product;
       }[]
     | null;
+  /**
+   * Images shown in the carousel. Add as many as you like.
+   */
+  media?: (number | Media)[] | null;
   /**
    * This field is auto-populated after-read
    */
@@ -644,7 +653,9 @@ export interface CarouselBlock {
  * via the `definition` "ThreeItemGridBlock".
  */
 export interface ThreeItemGridBlock {
+  contentType?: ('products' | 'media') | null;
   products?: (number | Product)[] | null;
+  mediaItems?: (number | Media)[] | null;
   id?: string | null;
   blockName?: string | null;
   blockType: 'threeItemGrid';
@@ -1273,6 +1284,7 @@ export interface ContentBlockSelect<T extends boolean = true> {
     | T
     | {
         size?: T;
+        media?: T;
         richText?: T;
         enableLink?: T;
         link?:
@@ -1318,11 +1330,13 @@ export interface ArchiveBlockSelect<T extends boolean = true> {
  * via the `definition` "CarouselBlock_select".
  */
 export interface CarouselBlockSelect<T extends boolean = true> {
+  contentType?: T;
   populateBy?: T;
   relationTo?: T;
   categories?: T;
   limit?: T;
   selectedDocs?: T;
+  media?: T;
   populatedDocs?: T;
   populatedDocsTotal?: T;
   id?: T;
@@ -1333,7 +1347,9 @@ export interface CarouselBlockSelect<T extends boolean = true> {
  * via the `definition` "ThreeItemGridBlock_select".
  */
 export interface ThreeItemGridBlockSelect<T extends boolean = true> {
+  contentType?: T;
   products?: T;
+  mediaItems?: T;
   id?: T;
   blockName?: T;
 }

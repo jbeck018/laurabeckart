@@ -7,18 +7,18 @@ import Link from 'next/link'
 import React from 'react'
 import { GridTileImage } from '@/components/Grid/tile'
 
-type CarouselProduct = {
+export type CarouselItemData = {
+  href?: null | string
   image: Media | null
-  priceInUSD: number | null
-  slug: string
-  title: string
+  key: string
+  label?: { amount: number; title: string } | null
 }
 
-export const CarouselClient: React.FC<{ products: CarouselProduct[] }> = ({ products }) => {
-  if (!products?.length) return null
+export const CarouselClient: React.FC<{ items: CarouselItemData[] }> = ({ items }) => {
+  if (!items?.length) return null
 
-  // Purposefully duplicating products to make the carousel loop and not run out of products on wide screens.
-  const carouselProducts = [...products, ...products, ...products]
+  // Purposefully duplicating items to make the carousel loop and not run out of items on wide screens.
+  const carouselItems = [...items, ...items, ...items]
 
   return (
     <Carousel
@@ -34,22 +34,24 @@ export const CarouselClient: React.FC<{ products: CarouselProduct[] }> = ({ prod
       ]}
     >
       <CarouselContent>
-        {carouselProducts.map((product, i) => (
-          <CarouselItem
-            className="relative aspect-square h-[30vh] max-h-[275px] w-2/3 max-w-[475px] flex-none md:w-1/3"
-            key={`${product.slug}${i}`}
-          >
-            <Link className="relative h-full w-full" href={`/products/${product.slug}`}>
-              <GridTileImage
-                label={{
-                  amount: product.priceInUSD ?? 0,
-                  title: product.title,
-                }}
-                media={product.image}
-              />
-            </Link>
-          </CarouselItem>
-        ))}
+        {carouselItems.map((item, i) => {
+          const tile = <GridTileImage label={item.label ?? undefined} media={item.image} />
+
+          return (
+            <CarouselItem
+              className="relative aspect-square h-[30vh] max-h-[275px] w-2/3 max-w-[475px] flex-none md:w-1/3"
+              key={`${item.key}${i}`}
+            >
+              {item.href ? (
+                <Link className="relative h-full w-full" href={item.href}>
+                  {tile}
+                </Link>
+              ) : (
+                <div className="relative h-full w-full">{tile}</div>
+              )}
+            </CarouselItem>
+          )
+        })}
       </CarouselContent>
     </Carousel>
   )

@@ -4,6 +4,8 @@ import configPromise from '@payload-config'
 import { DefaultDocumentIDType, getPayload } from 'payload'
 import React from 'react'
 
+import type { CarouselItemData } from './Component.client'
+
 import { CarouselClient } from './Component.client'
 
 const getCarouselImage = (product: Product): Media | null => {
@@ -25,7 +27,30 @@ export const CarouselBlock: React.FC<
     id?: DefaultDocumentIDType
   }
 > = async (props) => {
-  const { id, categories, limit = 3, populateBy, selectedDocs } = props
+  const { id, categories, contentType, limit = 3, media, populateBy, selectedDocs } = props
+
+  // Media mode: render uploaded images directly, no products required.
+  if (contentType === 'media') {
+    const items: CarouselItemData[] = (media ?? [])
+      .map((item, index): CarouselItemData | null => {
+        if (typeof item !== 'object' || item === null) return null
+        return {
+          href: null,
+          image: item,
+          key: `${item.id}-${index}`,
+          label: null,
+        }
+      })
+      .filter((item): item is CarouselItemData => item !== null)
+
+    if (!items.length) return null
+
+    return (
+      <div className=" w-full pb-6 pt-1">
+        <CarouselClient items={items} />
+      </div>
+    )
+  }
 
   const payload = await getPayload({ config: configPromise })
   let products: Product[] = []
@@ -84,16 +109,16 @@ export const CarouselBlock: React.FC<
 
   if (!products?.length) return null
 
-  const carouselProducts = products.map((product) => ({
+  const items: CarouselItemData[] = products.map((product) => ({
+    href: `/products/${product.slug ?? ''}`,
     image: getCarouselImage(product),
-    priceInUSD: product.priceInUSD ?? null,
-    slug: product.slug ?? '',
-    title: product.title,
+    key: product.slug ?? String(product.id),
+    label: null,
   }))
 
   return (
     <div className=" w-full pb-6 pt-1">
-      <CarouselClient products={carouselProducts} />
+      <CarouselClient items={items} />
     </div>
   )
 }

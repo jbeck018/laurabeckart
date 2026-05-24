@@ -2,9 +2,10 @@ import { cn } from '@/utilities/cn'
 import React from 'react'
 import { RichText } from '@/components/RichText'
 import type { DefaultDocumentIDType } from 'payload'
-import type { ContentBlock as ContentBlockProps } from '@/payload-types'
+import type { ContentBlock as ContentBlockProps, Media as MediaType } from '@/payload-types'
 
 import { CMSLink } from '../../components/Link'
+import { Media } from '../../components/Media'
 
 export const ContentBlock: React.FC<
   ContentBlockProps & {
@@ -27,7 +28,9 @@ export const ContentBlock: React.FC<
         {columns &&
           columns.length > 0 &&
           columns.map((col, index) => {
-            const { enableLink, link, richText, size } = col
+            const { enableLink, link, media, richText, size } = col
+
+            const hasMedia = media && typeof media === 'object'
 
             return (
               <div
@@ -36,6 +39,14 @@ export const ContentBlock: React.FC<
                 })}
                 key={index}
               >
+                {hasMedia && (
+                  <Media
+                    className={cn('mb-6', { 'mb-0': !richText && !enableLink })}
+                    imgClassName="w-full h-auto rounded-[0.8rem]"
+                    resource={media as MediaType}
+                  />
+                )}
+
                 {richText && <RichText data={richText} enableGutter={false} />}
 
                 {enableLink && <CMSLink {...link} />}
