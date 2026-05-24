@@ -1,7 +1,7 @@
 import type { Product, ArchiveBlock as ArchiveBlockProps } from '@/payload-types'
 
 import configPromise from '@payload-config'
-import { DefaultDocumentIDType, getPayload } from 'payload'
+import { DefaultDocumentIDType, getPayload, Where } from 'payload'
 import React from 'react'
 import { RichText } from '@/components/RichText'
 
@@ -13,7 +13,16 @@ export const ArchiveBlock: React.FC<
     className?: string
   }
 > = async (props) => {
-  const { id, categories, introContent, limit: limitFromProps, populateBy, selectedDocs } = props
+  const {
+    id,
+    categories,
+    introContent,
+    limit: limitFromProps,
+    populateBy,
+    productType,
+    selectedDocs,
+    sort,
+  } = props
 
   const limit = limitFromProps || 3
 
@@ -27,19 +36,24 @@ export const ArchiveBlock: React.FC<
       else return category
     })
 
+    const where: Where = {}
+
+    if (flattenedCategories && flattenedCategories.length > 0) {
+      where.categories = { in: flattenedCategories }
+    }
+
+    if (productType === 'originals') {
+      where.isOriginal = { equals: true }
+    } else if (productType === 'prints') {
+      where.isPrintable = { equals: true }
+    }
+
     const fetchedProducts = await payload.find({
       collection: 'products',
       depth: 1,
       limit,
-      ...(flattenedCategories && flattenedCategories.length > 0
-        ? {
-            where: {
-              categories: {
-                in: flattenedCategories,
-              },
-            },
-          }
-        : {}),
+      sort: sort || '-createdAt',
+      ...(Object.keys(where).length > 0 ? { where } : {}),
     })
 
     posts = fetchedProducts.docs

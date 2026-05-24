@@ -1,12 +1,14 @@
 export const dynamic = 'force-dynamic'
 
+import type { Metadata } from 'next'
 import type { ReactNode } from 'react'
 
 import { AdminBar } from '@/components/AdminBar'
 import { Footer } from '@/components/Footer'
 import { Header } from '@/components/Header'
 import { LivePreviewListener } from '@/components/LivePreviewListener'
-import { ensureStartsWith } from '@/utilities/ensureStartsWith'
+import { getServerSideURL } from '@/utilities/getURL'
+import { mergeOpenGraph } from '@/utilities/mergeOpenGraph'
 import { Providers } from '@/providers'
 import { InitTheme } from '@/providers/Theme/InitTheme'
 import { GeistSans } from 'geist/font/sans'
@@ -35,32 +37,20 @@ const sacramento = Sacramento({
   display: 'swap',
 })
 
-/* const { SITE_NAME, TWITTER_CREATOR, TWITTER_SITE } = process.env
-const baseUrl = process.env.NEXT_PUBLIC_VERCEL_URL
-  ? `https://${process.env.NEXT_PUBLIC_VERCEL_URL}`
-  : 'http://localhost:3000'
-const twitterCreator = TWITTER_CREATOR ? ensureStartsWith(TWITTER_CREATOR, '@') : undefined
-const twitterSite = TWITTER_SITE ? ensureStartsWith(TWITTER_SITE, 'https://') : undefined
- */
-/* export const metadata = {
-  metadataBase: new URL(baseUrl),
+export const metadata: Metadata = {
+  description: 'Original paintings and fine-art prints by Laura Beckart.',
+  icons: [{ rel: 'icon', type: 'image/jpeg', url: '/favicon.jpg' }],
+  metadataBase: new URL(getServerSideURL()),
+  openGraph: mergeOpenGraph(),
   robots: {
     follow: true,
     index: true,
   },
   title: {
-    default: SITE_NAME,
-    template: `%s | ${SITE_NAME}`,
+    default: 'laurabeckart',
+    template: '%s | laurabeckart',
   },
-  ...(twitterCreator &&
-    twitterSite && {
-      twitter: {
-        card: 'summary_large_image',
-        creator: twitterCreator,
-        site: twitterSite,
-      },
-    }),
-} */
+}
 
 export default async function RootLayout({ children }: { children: ReactNode }) {
   return (
@@ -79,8 +69,7 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
     >
       <head>
         <InitTheme />
-        <link href="/favicon.ico" rel="icon" sizes="32x32" />
-        <link href="/favicon.svg" rel="icon" type="image/svg+xml" />
+        <link href="/favicon.jpg" rel="icon" type="image/jpeg" />
       </head>
       <body>
         <Providers>

@@ -3,12 +3,15 @@ import type { Product, Variant } from '@/payload-types'
 
 import { RichText } from '@/components/RichText'
 import { AddToCart } from '@/components/Cart/AddToCart'
+import { Button } from '@/components/ui/button'
 import { Price } from '@/components/Price'
 import React, { Suspense } from 'react'
 
 import { VariantSelector } from './VariantSelector'
 import { useCurrency } from '@payloadcms/plugin-ecommerce/client/react'
 import { StockIndicator } from '@/components/product/StockIndicator'
+import { SoldBadge } from '@/components/product/SoldBadge'
+import { hasPurchasableOption, isOriginalSold } from '@/utilities/artwork'
 
 export function ProductDescription({ product }: { product: Product }) {
   const { currency } = useCurrency()
@@ -17,6 +20,11 @@ export function ProductDescription({ product }: { product: Product }) {
     highestAmount = 0
   const priceField = `priceIn${currency.code}` as keyof Product
   const hasVariants = product.enableVariants && Boolean(product.variants?.docs?.length)
+
+  const originalSold = isOriginalSold(product)
+  const anythingAvailable = hasPurchasableOption(product)
+  // A sold original with no remaining purchasable options (e.g. prints) is fully sold.
+  const fullySold = originalSold && !anythingAvailable
 
   if (hasVariants) {
     const priceField = `priceIn${currency.code}` as keyof Variant
@@ -55,12 +63,14 @@ export function ProductDescription({ product }: { product: Product }) {
     <div className="flex flex-col gap-6">
       <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between">
         <h1 className="text-2xl font-medium">{product.title}</h1>
-        <div className="uppercase font-mono">
-          {hasVariants ? (
-            <Price highestAmount={highestAmount} lowestAmount={lowestAmount} />
-          ) : (
-            <Price amount={amount} />
-          )}
+        <div className="uppercase font-mono flex items-center gap-3">
+          {originalSold && <SoldBadge />}
+          {!fullySold &&
+            (hasVariants ? (
+              <Price highestAmount={highestAmount} lowestAmount={lowestAmount} />
+            ) : (
+              <Price amount={amount} />
+            ))}
         </div>
       </div>
       {product.description ? (
@@ -76,16 +86,24 @@ export function ProductDescription({ product }: { product: Product }) {
           <hr />
         </>
       )}
-      <div className="flex items-center justify-between">
-        <Suspense fallback={null}>
-          <StockIndicator product={product} />
-        </Suspense>
-      </div>
+      {!fullySold && (
+        <div className="flex items-center justify-between">
+          <Suspense fallback={null}>
+            <StockIndicator product={product} />
+          </Suspense>
+        </div>
+      )}
 
       <div className="flex items-center justify-between">
-        <Suspense fallback={null}>
-          <AddToCart product={product} />
-        </Suspense>
+        {fullySold ? (
+          <Button aria-label="Sold" disabled type="button" variant="outline">
+            Sold
+          </Button>
+        ) : (
+          <Suspense fallback={null}>
+            <AddToCart product={product} />
+          </Suspense>
+        )}
       </div>
     </div>
   )

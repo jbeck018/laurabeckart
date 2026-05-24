@@ -76,6 +76,7 @@ export interface Config {
     pages: Page;
     categories: Category;
     media: Media;
+    fulfillments: Fulfillment;
     forms: Form;
     'form-submissions': FormSubmission;
     addresses: Address;
@@ -109,6 +110,7 @@ export interface Config {
     pages: PagesSelect<false> | PagesSelect<true>;
     categories: CategoriesSelect<false> | CategoriesSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
+    fulfillments: FulfillmentsSelect<false> | FulfillmentsSelect<true>;
     forms: FormsSelect<false> | FormsSelect<true>;
     'form-submissions': FormSubmissionsSelect<false> | FormSubmissionsSelect<true>;
     addresses: AddressesSelect<false> | AddressesSelect<true>;
@@ -309,6 +311,14 @@ export interface Product {
     description?: string | null;
   };
   categories?: (number | Category)[] | null;
+  /**
+   * This piece offers a one-of-a-kind original for sale. Add an "Original" variant (Format) with inventory 1.
+   */
+  isOriginal?: boolean | null;
+  /**
+   * Prints of this piece can be ordered. Add print-size variants (Format) with a price per size.
+   */
+  isPrintable?: boolean | null;
   /**
    * When enabled, the slug will auto-generate from the title field on save and autosave.
    */
@@ -584,7 +594,12 @@ export interface ArchiveBlock {
   } | null;
   populateBy?: ('collection' | 'selection') | null;
   relationTo?: 'products' | null;
+  /**
+   * Filter by artwork type.
+   */
+  productType?: ('all' | 'originals' | 'prints') | null;
   categories?: (number | Category)[] | null;
+  sort?: ('-createdAt' | 'createdAt' | 'title' | 'priceInUSD' | '-priceInUSD') | null;
   limit?: number | null;
   selectedDocs?:
     | {
@@ -1033,6 +1048,34 @@ export interface Address {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "fulfillments".
+ */
+export interface Fulfillment {
+  id: number;
+  /**
+   * Auto-generated summary of the item.
+   */
+  title?: string | null;
+  status: 'new' | 'in_progress' | 'completed' | 'cancelled';
+  type?: ('original' | 'print') | null;
+  /**
+   * Selected print size (prints only).
+   */
+  size?: string | null;
+  quantity?: number | null;
+  product?: (number | null) | Product;
+  variant?: (number | null) | Variant;
+  order?: (number | null) | Order;
+  customerEmail?: string | null;
+  /**
+   * Internal notes (shipping, framing, tracking, etc.).
+   */
+  notes?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "form-submissions".
  */
 export interface FormSubmission {
@@ -1087,6 +1130,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'media';
         value: number | Media;
+      } | null)
+    | ({
+        relationTo: 'fulfillments';
+        value: number | Fulfillment;
       } | null)
     | ({
         relationTo: 'forms';
@@ -1319,7 +1366,9 @@ export interface ArchiveBlockSelect<T extends boolean = true> {
   introContent?: T;
   populateBy?: T;
   relationTo?: T;
+  productType?: T;
   categories?: T;
+  sort?: T;
   limit?: T;
   selectedDocs?: T;
   id?: T;
@@ -1403,6 +1452,24 @@ export interface MediaSelect<T extends boolean = true> {
   height?: T;
   focalX?: T;
   focalY?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "fulfillments_select".
+ */
+export interface FulfillmentsSelect<T extends boolean = true> {
+  title?: T;
+  status?: T;
+  type?: T;
+  size?: T;
+  quantity?: T;
+  product?: T;
+  variant?: T;
+  order?: T;
+  customerEmail?: T;
+  notes?: T;
+  updatedAt?: T;
+  createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1650,6 +1717,8 @@ export interface ProductsSelect<T extends boolean = true> {
         description?: T;
       };
   categories?: T;
+  isOriginal?: T;
+  isPrintable?: T;
   generateSlug?: T;
   slug?: T;
   updatedAt?: T;

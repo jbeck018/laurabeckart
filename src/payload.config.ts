@@ -29,12 +29,14 @@ import { getCloudflareContext } from '@opennextjs/cloudflare'
 import type { GetPlatformProxyOptions } from 'wrangler'
 
 import { Categories } from '@/collections/Categories'
+import { Fulfillments } from '@/collections/Fulfillments'
 import { Media } from '@/collections/Media'
 import { Pages } from '@/collections/Pages'
 import { Users } from '@/collections/Users'
 import { Footer } from '@/globals/Footer'
 import { Header } from '@/globals/Header'
 import { richTextTextStateFeature } from '@/utilities/richTextStyles'
+import { seedArtworkDefaultsEndpoint } from '@/endpoints/seedArtworkDefaults'
 import { plugins } from './plugins'
 
 const filename = fileURLToPath(import.meta.url)
@@ -64,9 +66,13 @@ export default buildConfig({
       beforeLogin: ['@/components/BeforeLogin#BeforeLogin'],
       beforeDashboard: ['@/components/BeforeDashboard#BeforeDashboard'],
     },
+    meta: {
+      icons: [{ rel: 'icon', type: 'image/jpeg', url: '/favicon.jpg' }],
+      titleSuffix: ' · laurabeckart',
+    },
     user: Users.slug,
   },
-  collections: [Users, Pages, Categories, Media],
+  collections: [Users, Pages, Categories, Media, Fulfillments],
   db: sqliteD1Adapter({ binding: cloudflare.env.D1 }),
   editor: lexicalEditor({
     features: () => {
@@ -113,7 +119,7 @@ export default buildConfig({
       ]
     },
   }),
-  endpoints: [],
+  endpoints: [seedArtworkDefaultsEndpoint],
   globals: [Header, Footer],
   plugins: [
     ...plugins,

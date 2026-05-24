@@ -57,6 +57,21 @@ export const Archive: Block = {
       ],
     },
     {
+      name: 'productType',
+      type: 'select',
+      admin: {
+        condition: (_, siblingData) => siblingData.populateBy === 'collection',
+        description: 'Filter by artwork type.',
+      },
+      defaultValue: 'all',
+      label: 'Artwork Type',
+      options: [
+        { label: 'All products', value: 'all' },
+        { label: 'Originals only', value: 'originals' },
+        { label: 'Prints only', value: 'prints' },
+      ],
+    },
+    {
       name: 'categories',
       type: 'relationship',
       admin: {
@@ -65,6 +80,22 @@ export const Archive: Block = {
       hasMany: true,
       label: 'Categories To Show',
       relationTo: 'categories',
+    },
+    {
+      name: 'sort',
+      type: 'select',
+      admin: {
+        condition: (_, siblingData) => siblingData.populateBy === 'collection',
+      },
+      defaultValue: '-createdAt',
+      label: 'Sort By',
+      options: [
+        { label: 'Newest first', value: '-createdAt' },
+        { label: 'Oldest first', value: 'createdAt' },
+        { label: 'Title (A–Z)', value: 'title' },
+        { label: 'Price (low → high)', value: 'priceInUSD' },
+        { label: 'Price (high → low)', value: '-priceInUSD' },
+      ],
     },
     {
       name: 'limit',

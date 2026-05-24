@@ -207,6 +207,36 @@ export const ProductsCollection: CollectionOverride = ({ defaultCollection }) =>
       hasMany: true,
       relationTo: 'categories',
     },
+    {
+      type: 'collapsible',
+      label: 'Artwork type',
+      admin: {
+        position: 'sidebar',
+        initCollapsed: false,
+      },
+      fields: [
+        {
+          name: 'isOriginal',
+          type: 'checkbox',
+          defaultValue: false,
+          label: 'Original available',
+          admin: {
+            description:
+              'This piece offers a one-of-a-kind original for sale. Add an "Original" variant (Format) with inventory 1.',
+          },
+        },
+        {
+          name: 'isPrintable',
+          type: 'checkbox',
+          defaultValue: false,
+          label: 'Prints available',
+          admin: {
+            description:
+              'Prints of this piece can be ordered. Add print-size variants (Format) with a price per size.',
+          },
+        },
+      ],
+    },
     slugField(),
   ],
 })
